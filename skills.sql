@@ -158,6 +158,11 @@ after:
 
 -- 1. Select the name of any brand with more than 5 models in the database.
 
+    SELECT brand_name, COUNT(brand_name)
+    FROM Models
+    GROUP BY brand_name
+    HAVING COUNT(brand_name) > 5;
+
 -- 2. Add the following rows to the Models table.
 
 -- year    name       brand_name
@@ -165,10 +170,20 @@ after:
 -- 2015    Chevrolet  Malibu
 -- 2015    Subaru     Outback
 
--- 3. Write a SQL statement to crate a table called `Awards`
+    INSERT INTO Models (year, brand_name, name) Values ('2015', 'Chevrolet', 'Malibu');
+
+    INSERT INTO Models (year, brand_name, name) Values ('2015', 'Subaru', 'Outback');
+
+-- 3. Write a SQL statement to create a table called `Awards`
 --    with columns `name`, `year`, and `winner`. Choose
 --    an appropriate datatype and nullability for each column
 --   (no need to do subqueries here).
+
+    CREATE TABLE Awards(
+        name VARCHAR(30) NOT NULL,
+        year DATE,
+        winner INTEGER);
+
 
 -- 4. Write a SQL statement that adds the following rows to the Awards table:
 
@@ -177,9 +192,25 @@ after:
 --   IIHS Safety Award    2015      the id for the 2015 Chevrolet Malibu
 --   IIHS Safety Award    2015      the id for the 2015 Subaru Outback
 
+    INSERT INTO Awards (name, year, winner)
+    VALUES ('IIHS Safety Award', '2015',
+        (SELECT id FROM Models WHERE brand_name="Chevrolet" AND name="Malibu")
+    );
+
+    INSERT INTO Awards (name, year, winner)
+    VALUES ('IIHS Safety Award', '2015',
+        (SELECT id FROM Models WHERE brand_name="Subaru" AND name="Outback")
+    );
+
+
 -- 5. Using a subquery, select only the *name* of any model whose 
 -- year is the same year that *any* brand was founded.
 
+    SELECT m.name
+    FROM Models AS m
+        JOIN Brands AS b
+            ON b.name = m.brand_name
+    WHERE year=(SELECT founded FROM Brands WHERE b.name=m.brand_name);
 
 
 
